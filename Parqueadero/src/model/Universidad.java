@@ -86,6 +86,27 @@ public class Universidad {
     }
 
     /**
+     * Método para calcular el tiempo de permanencia de un vehiculo
+     * @param horaIngreso
+     * @param horaSalida
+     * @return
+     */
+    public double calcularTiempoPermanencia(String horaIngreso, String horaSalida) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+
+        LocalTime ingreso = LocalTime.parse(horaIngreso, formatter);
+        LocalTime salida = LocalTime.parse(horaSalida, formatter);
+
+        long minutos = Duration.between(ingreso, salida).toMinutes();
+
+        if (minutos < 0) {
+            throw new IllegalArgumentException("La hora de salida no puede ser menor que la hora de ingreso");
+        }
+
+        return Math.ceil(minutos / 60.0);
+    }
+
+    /**
      * Método para registrar la Salida de un Vehiculo
      * @param placa
      * @param horaSalida
@@ -93,7 +114,6 @@ public class Universidad {
      */
     public double registrarSalidaVehiculo(String placa, String horaSalida) {
 
-        // 1. Buscar el vehículo dentro del parqueadero
         Vehiculo vehiculoEncontrado = null;
 
         for (Vehiculo v : listVehiculos) {
@@ -104,32 +124,18 @@ public class Universidad {
             }
         }
 
-        // 2. Validar si no existe
         if (vehiculoEncontrado == null) {
             System.out.println("Error: el vehículo no está registrado dentro del parqueadero");
             return -1;
         }
 
-        // 3. Registrar hora de salida
         vehiculoEncontrado.setHoraSalida(horaSalida);
 
-        // 4. Calcular tiempo de permanencia
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        double horas = calcularTiempoPermanencia(
+                vehiculoEncontrado.getHoraIngreso(),
+                vehiculoEncontrado.getHoraSalida()
+        );
 
-        LocalTime ingreso = LocalTime.parse(vehiculoEncontrado.getHoraIngreso(), formatter);
-        LocalTime salida = LocalTime.parse(horaSalida, formatter);
-
-        long minutos = Duration.between(ingreso, salida).toMinutes();
-
-        if (minutos < 0) {
-            System.out.println("Error: la hora de salida no puede ser menor que la hora de ingreso");
-            return -1;
-        }
-
-        // Redondear a horas cobrables
-        double horas = Math.ceil(minutos / 60.0);
-
-        // 5. Crear tarifa según el tipo de vehículo
         Tarifa tarifa = new Tarifa(
                 0,
                 0,
@@ -139,13 +145,11 @@ public class Universidad {
 
         double totalPagar = tarifa.calcularTotal(horas, vehiculoEncontrado.getTheUsuario());
 
-        // 6. Liberar espacio
         EspacioParqueadero espacio = vehiculoEncontrado.getTheEspacioParqueadero();
         if (espacio != null) {
             espacio.liberarEspacio();
         }
 
-        // 7. Cambiar estado del vehículo
         vehiculoEncontrado.setEstadoVehiculo(EstadoVehiculo.FUERA);
 
         System.out.println("Salida registrada correctamente");
