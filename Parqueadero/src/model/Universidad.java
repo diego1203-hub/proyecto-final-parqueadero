@@ -1,5 +1,6 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.time.Duration;
 import java.time.LocalTime;
@@ -29,10 +30,10 @@ public class Universidad {
         this.nombre = nombre;
         this.nit = nit;
         this.direccion = direccion;
-        this.listUsuarios = listUsuarios;
-        this.listVehiculos = listVehiculos;
-        this.listEspaciosParqueaderos = listEspaciosParqueaderos;
-        this.listTarifas = listTarifas;
+        this.listVehiculos = new ArrayList<>();
+        this.listEspaciosParqueaderos = new ArrayList<>();
+        this.listUsuarios = new ArrayList<>();
+        this.listTarifas = new ArrayList<>();
     }
 
     /**
@@ -159,10 +160,191 @@ public class Universidad {
         return totalPagar;
     }
 
+    /**
+     * Método para controlar roles de usuario
+     * @param usuario
+     * @return
+     */
+    public String controlarRol(Usuario usuario) {
+        if (usuario == null) {
+            return "Usuario no válido";
+        }
 
+        if (usuario.getTipoUsuario() == TipoUsuario.ADMINISTRATIVO) {
+            return "Administrador";
+        } else {
+            return "Operador";
+        }
+    }
 
+    /**
+     * Método para registrar nuevo espacio
+     * @param espacio
+     * @return
+     */
+    public boolean registrarNuevoEspacio(EspacioParqueadero espacio) {
+        if (espacio == null) {
+            return false;
+        }
 
+        for (EspacioParqueadero e : listEspaciosParqueaderos) {
+            if (e.getCodigo() == espacio.getCodigo()) {
+                System.out.println("Ya existe un espacio con ese código");
+                return false;
+            }
+        }
 
+        listEspaciosParqueaderos.add(espacio);
+        System.out.println("Espacio registrado correctamente");
+        return true;
+    }
+
+    /**
+     * Método para modificar espacio
+     * @param espacio
+     * @return
+     */
+    public boolean modificarEspacio(EspacioParqueadero espacio) {
+        if (espacio == null) {
+            return false;
+        }
+
+        for (EspacioParqueadero e : listEspaciosParqueaderos) {
+            if (e.getCodigo() == espacio.getCodigo()) {
+                e.setTipoVehiculo(espacio.getTipoVehiculo());
+                e.setEstadoEspacio(espacio.getEstadoEspacio());
+                System.out.println("Espacio modificado correctamente");
+                return true;
+            }
+        }
+
+        System.out.println("No se encontró el espacio");
+        return false;
+    }
+
+    /**
+     * Método para deshabilitar espacio
+     * @param espacio
+     * @return
+     */
+    public boolean deshabilitarEspacio(EspacioParqueadero espacio) {
+        if (espacio == null) {
+            return false;
+        }
+
+        for (EspacioParqueadero e : listEspaciosParqueaderos) {
+            if (e.getCodigo() == espacio.getCodigo()) {
+                if (e.getEstadoEspacio() == EstadoEspacio.DISPONIBLE) {
+                    e.setEstadoEspacio(EstadoEspacio.MANTENIMIENTO);
+                    System.out.println("Espacio deshabilitado correctamente");
+                    return true;
+                } else {
+                    System.out.println("No se puede deshabilitar un espacio ocupado");
+                    return false;
+                }
+            }
+        }
+
+        System.out.println("Espacio no encontrado");
+        return false;
+    }
+
+    /**
+     * Método para verificar espacios disponibles
+     * @return
+     */
+    public boolean verificarEspacioDisponible() {
+        for (EspacioParqueadero e : listEspaciosParqueaderos) {
+            if (e.getEstadoEspacio() == EstadoEspacio.DISPONIBLE) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Método para consultar la disponibilidad de espacios en la universidad
+     * @return
+     */
+    public String consultarDisponibilidadEspacios() {
+        int disponibles = 0;
+        int ocupados = 0;
+        int mantenimiento = 0;
+
+        for (EspacioParqueadero e : listEspaciosParqueaderos) {
+            if (e.getEstadoEspacio() == EstadoEspacio.DISPONIBLE) {
+                disponibles++;
+            } else if (e.getEstadoEspacio() == EstadoEspacio.OCUPADO) {
+                ocupados++;
+            } else if (e.getEstadoEspacio() == EstadoEspacio.MANTENIMIENTO) {
+                mantenimiento++;
+            }
+        }
+
+        return "Total: " + listEspaciosParqueaderos.size() +
+                "\nDisponibles: " + disponibles +
+                "\nOcupados: " + ocupados +
+                "\nEn mantenimiento: " + mantenimiento;
+    }
+
+    /**
+     * Método para consultar los vehiculos que ya están estacionados
+     * @return
+     */
+    public String consultarVehiculosEstacionados() {
+        String reporte = "";
+
+        for (Vehiculo v : listVehiculos) {
+            if (v.getEstadoVehiculo() == EstadoVehiculo.DENTRO) {
+                reporte += "Placa: " + v.getPlaca() +
+                        " | Tipo: " + v.getTipoVehiculo() +
+                        " | Hora ingreso: " + v.getHoraIngreso();
+
+                if (v.getTheEspacioParqueadero() != null) {
+                    reporte += " | Espacio: " + v.getTheEspacioParqueadero().getCodigo();
+                }
+
+                reporte += "\n";
+            }
+        }
+
+        if (reporte.equals("")) {
+            return "No hay vehículos estacionados";
+        }
+
+        return reporte;
+    }
+
+    /**
+     * Método para generar el reporte de las actividades del parqueadero
+     * @return
+     */
+    public String generarReportes() {
+        int dentro = 0;
+        int fuera = 0;
+
+        for (Vehiculo v : listVehiculos) {
+            if (v.getEstadoVehiculo() == EstadoVehiculo.DENTRO) {
+                dentro++;
+            } else if (v.getEstadoVehiculo() == EstadoVehiculo.FUERA) {
+                fuera++;
+            }
+        }
+
+        int disponibles = 0;
+        for (EspacioParqueadero e : listEspaciosParqueaderos) {
+            if (e.getEstadoEspacio() == EstadoEspacio.DISPONIBLE) {
+                disponibles++;
+            }
+        }
+
+        return "===== REPORTE GENERAL =====" +
+                "\nTotal vehículos registrados: " + listVehiculos.size() +
+                "\nVehículos dentro: " + dentro +
+                "\nVehículos fuera: " + fuera +
+                "\nEspacios totales: " + listEspaciosParqueaderos.size() +
+                "\nEspacios disponibles: " + disponibles;
+    }
 
     /**
      * Getters y Setters de la clase Universidad
