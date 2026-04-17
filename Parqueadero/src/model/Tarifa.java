@@ -52,11 +52,11 @@ public class Tarifa {
         this.valorPorHora = valorPorHora;
     }
 
-    public boolean isDescuento() {
+    public double getDescuento() {
         return descuento;
     }
 
-    public void setDescuento(boolean descuento) {
+    public void setDescuento(double descuento) {
         this.descuento = descuento;
     }
 }

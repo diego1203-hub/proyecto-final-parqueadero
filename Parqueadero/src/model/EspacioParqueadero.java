@@ -15,7 +15,7 @@ public class EspacioParqueadero {
     public EspacioParqueadero(int codigo, TipoVehiculo tipoVehiculo,EstadoEspacio estadoEspacio) {
         this.codigo = codigo;
         this.tipoVehiculo = tipoVehiculo;
-        this.estadoEspacio=EstadoEspacio.DISPONIBLE;
+        this.estadoEspacio=estadoEspacio;
     }
 
     /**
