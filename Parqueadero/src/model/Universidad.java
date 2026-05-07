@@ -50,7 +50,7 @@ public class Universidad {
         String respuesta="";
         for(Vehiculo v:listVehiculos){
             if(v.getPlaca().equals(placa) && v.getEstadoVehiculo()==EstadoVehiculo.DENTRO){
-                respuesta= "El vehículo ya se encuentra adentro de la universidad";
+                respuesta= "El vehículo ya se encuentra dentro de la universidad";
             }
         }
         EspacioParqueadero espacioDisponible = null;
@@ -58,31 +58,30 @@ public class Universidad {
         for (EspacioParqueadero e : listEspaciosParqueaderos) {
             if (e.getEstadoEspacio() == EstadoEspacio.DISPONIBLE &&
                     e.getTipoVehiculo() == tipoVehiculo) {
-
                 espacioDisponible = e;
                 break;
             }
         }
-
         if (espacioDisponible == null) {
             respuesta= "No hay espacios disponibles";
         }
-        Vehiculo vehiculo = new Vehiculo(
-                placa,
-                nombre,
-                identificacionConductor,
-                horaIngreso,
-                null,
-                null,
-                espacioDisponible,
-                tipoVehiculo,
-                theUsuario,
-                EstadoVehiculo.DENTRO
-        );
-        espacioDisponible.asignarEspacio(vehiculo);
-        vehiculo.setTheEspacioParqueadero(espacioDisponible);
-        listVehiculos.add(vehiculo);
-        respuesta="Se ha añadido el vehículo existosamente";
+            Vehiculo vehiculo = new Vehiculo(
+                    placa,
+                    nombreConductor,
+                    identificacionConductor,
+                    horaIngreso,
+                    null,
+                    null,
+                    espacioDisponible,
+                    tipoVehiculo,
+                    theUsuario,
+                    EstadoVehiculo.DENTRO
+            );
+        //revisar//
+            espacioDisponible.asignarEspacio(vehiculo);
+            vehiculo.setTheEspacioParqueadero(espacioDisponible);
+            listVehiculos.add(vehiculo);
+            respuesta = "Se ha añadido el vehículo existosamente";
         return respuesta;
     }
 
@@ -99,7 +98,7 @@ public class Universidad {
         LocalTime salida = LocalTime.parse(horaSalida, formatter);
 
         long minutos = Duration.between(ingreso, salida).toMinutes();
-
+//revisar//
         if (minutos < 0) {
             throw new IllegalArgumentException("La hora de salida no puede ser menor que la hora de ingreso");
         }
@@ -114,9 +113,7 @@ public class Universidad {
      * @return
      */
     public double registrarSalidaVehiculo(String placa, String horaSalida) {
-
         Vehiculo vehiculoEncontrado = null;
-
         for (Vehiculo v : listVehiculos) {
             if (v.getPlaca().equalsIgnoreCase(placa) &&
                     v.getEstadoVehiculo() == EstadoVehiculo.DENTRO) {
@@ -124,33 +121,27 @@ public class Universidad {
                 break;
             }
         }
-
         if (vehiculoEncontrado == null) {
             System.out.println("Error: el vehículo no está registrado dentro del parqueadero");
             return -1;
         }
-
         vehiculoEncontrado.setHoraSalida(horaSalida);
-
         double horas = calcularTiempoPermanencia(
                 vehiculoEncontrado.getHoraIngreso(),
                 vehiculoEncontrado.getHoraSalida()
         );
-
         Tarifa tarifa = new Tarifa(
                 0,
                 0,
                 null,
                 vehiculoEncontrado.getTipoVehiculo()
         );
-
         double totalPagar = tarifa.calcularTotal(horas, vehiculoEncontrado.getTheUsuario());
 
         EspacioParqueadero espacio = vehiculoEncontrado.getTheEspacioParqueadero();
         if (espacio != null) {
             espacio.liberarEspacio();
         }
-
         vehiculoEncontrado.setEstadoVehiculo(EstadoVehiculo.FUERA);
 
         System.out.println("Salida registrada correctamente");
@@ -159,8 +150,6 @@ public class Universidad {
 
         return totalPagar;
     }
-
-
 
     //<------------------------REVISAR---------------------------->
 
@@ -173,7 +162,6 @@ public class Universidad {
         if (usuario == null) {
             return "Usuario no válido";
         }
-
         if (usuario.getTipoUsuario() == TipoUsuario.ADMINISTRATIVO) {
             return "Administrador";
         } else {
@@ -190,14 +178,12 @@ public class Universidad {
         if (espacio == null) {
             return false;
         }
-
         for (EspacioParqueadero e : listEspaciosParqueaderos) {
             if (e.getCodigo() == espacio.getCodigo()) {
                 System.out.println("Ya existe un espacio con ese código");
                 return false;
             }
         }
-
         listEspaciosParqueaderos.add(espacio);
         System.out.println("Espacio registrado correctamente");
         return true;
@@ -212,7 +198,6 @@ public class Universidad {
         if (espacio == null) {
             return false;
         }
-
         for (EspacioParqueadero e : listEspaciosParqueaderos) {
             if (e.getCodigo() == espacio.getCodigo()) {
                 e.setTipoVehiculo(espacio.getTipoVehiculo());
@@ -221,7 +206,6 @@ public class Universidad {
                 return true;
             }
         }
-
         System.out.println("No se encontró el espacio");
         return false;
     }
