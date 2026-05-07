@@ -38,6 +38,11 @@ public class Universidad {
 
     // ------------------ CRUD VEHICULO ------------------
 
+    /**
+     * Método para buscar un vehiculo por placa
+     * @param placa
+     * @return
+     */
     public Vehiculo obtenerVehiculo(String placa){
         Vehiculo encontrado = null;
         for(Vehiculo v : listVehiculos){
@@ -150,25 +155,38 @@ public class Universidad {
     // ------------------ CRUD ESPACIO PARQUEADERO ------------------
 
     /**
-     * Método para registrar nuevo espacio
-     * @param espacio
+     * Método para buscar un espacio en el parqueadero por código
+     * @param codigo
      * @return
      */
-    public boolean registrarNuevoEspacio(EspacioParqueadero espacio) {
-        if (espacio == null) {
-            return false;
-        }
-
-        for (EspacioParqueadero e : listEspaciosParqueaderos) {
-            if (e.getCodigo() == espacio.getCodigo()) {
-                System.out.println("Ya existe un espacio con ese código");
-                return false;
+    public EspacioParqueadero obtenerEspacio(int codigo){
+        EspacioParqueadero encontrado = null;
+        for(EspacioParqueadero ep : listEspaciosParqueaderos){
+            if(ep.getCodigo()==(codigo)){
+                encontrado = ep;
+                break;
             }
         }
-
-        listEspaciosParqueaderos.add(espacio);
-        System.out.println("Espacio registrado correctamente");
-        return true;
+        return encontrado;
+    }
+    /**
+     * Método para registrar nuevo espacio en el parqueadero
+     * @param codigo
+     * @param tipoVehiculo
+     * @param estadoEspacio
+     * @return
+     */
+    public String registrarNuevoEspacio(int codigo, TipoVehiculo tipoVehiculo,EstadoEspacio estadoEspacio) {
+        String respuesta="";
+        EspacioParqueadero espacio= obtenerEspacio(codigo);
+        if (espacio == null) {
+            respuesta= "El espacio no existe en el registro del parqueadero";
+        } else {
+            EspacioParqueadero espacioNuevo= new EspacioParqueadero(codigo, null, null);
+            listEspaciosParqueaderos.add(espacio);
+            respuesta= "Espacio registrado correctamente";
+        }
+        return respuesta;
     }
 
     /**
@@ -238,7 +256,8 @@ public class Universidad {
      * Método para consultar la disponibilidad de espacios en la universidad
      * @return
      */
-    public String consultarDisponibilidadEspacios() {
+    public String consultarEstadoEspacios() {
+        String espacios="";
         int disponibles = 0;
         int ocupados = 0;
         int mantenimiento = 0;
@@ -252,11 +271,12 @@ public class Universidad {
                 mantenimiento++;
             }
         }
-
-        return "Total: " + listEspaciosParqueaderos.size() +
+        espacios="Total: " + listEspaciosParqueaderos.size() +
                 "\nDisponibles: " + disponibles +
                 "\nOcupados: " + ocupados +
                 "\nEn mantenimiento: " + mantenimiento;
+
+        return espacios;
     }
 
     /**
