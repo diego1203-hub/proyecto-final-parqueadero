@@ -300,7 +300,7 @@ public class Universidad {
             }
         }
 
-        if (reporte.equals("")) {
+        if (reporte.isEmpty()) {
             return "No hay vehículos estacionados";
         }
 
