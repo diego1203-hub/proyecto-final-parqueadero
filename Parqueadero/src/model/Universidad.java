@@ -182,7 +182,7 @@ public class Universidad {
         if (espacio == null) {
             respuesta= "El espacio no existe en el registro del parqueadero";
         } else {
-            EspacioParqueadero espacioNuevo= new EspacioParqueadero(codigo, null, null);
+            EspacioParqueadero espacioNuevo= new EspacioParqueadero(codigo, null);
             listEspaciosParqueaderos.add(espacio);
             respuesta= "Espacio registrado correctamente";
         }
