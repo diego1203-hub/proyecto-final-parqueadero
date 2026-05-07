@@ -8,10 +8,9 @@ public class Tarifa {
     private List<Vehiculo> listVehiculos;
     private TipoVehiculo tipoVehiculo;
 
-    public Tarifa(double valorPorHora, double descuento, List<Vehiculo> listVehiculos, TipoVehiculo tipoVehiculo) {
+    public Tarifa(double valorPorHora, double descuento, TipoVehiculo tipoVehiculo) {
         this.valorPorHora = valorPorHora;
         this.descuento = descuento;
-        this.listVehiculos = listVehiculos;
         this.tipoVehiculo = tipoVehiculo;
     }
     public double asignarTarifa(){

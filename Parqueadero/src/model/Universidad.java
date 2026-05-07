@@ -36,8 +36,21 @@ public class Universidad {
         this.listTarifas = new ArrayList<>();
     }
 
+    // ------------------ CRUD VEHICULO ------------------
+
+    public Vehiculo obtenerVehiculo(String placa){
+        Vehiculo encontrado = null;
+        for(Vehiculo v : listVehiculos){
+            if(v.getPlaca().equalsIgnoreCase(placa)){
+                encontrado = v;
+                break;
+            }
+        }
+        return encontrado;
+    }
+
     /**
-     * Método para registrar la entrada de un Vehículo
+     * Método para registrar la entrada de un vehículo y registrar el vehículo
      * @param placa
      * @param nombreConductor
      * @param identificacionConductor
@@ -49,7 +62,7 @@ public class Universidad {
     public String registrarEntradaVehiculo(String placa, String nombreConductor, int identificacionConductor, String horaIngreso, TipoVehiculo tipoVehiculo, Usuario theUsuario){
         String respuesta="";
         for(Vehiculo v:listVehiculos){
-            if(v.getPlaca().equals(placa) && v.getEstadoVehiculo()==EstadoVehiculo.DENTRO){
+            if(v.getPlaca().equalsIgnoreCase(placa) && v.getEstadoVehiculo()==EstadoVehiculo.DENTRO){
                 respuesta= "El vehículo ya se encuentra adentro de la universidad";
             }
         }
@@ -113,73 +126,28 @@ public class Universidad {
      * @param horaSalida
      * @return
      */
-    public double registrarSalidaVehiculo(String placa, String horaSalida) {
-
-        Vehiculo vehiculoEncontrado = null;
-
-        for (Vehiculo v : listVehiculos) {
-            if (v.getPlaca().equalsIgnoreCase(placa) &&
-                    v.getEstadoVehiculo() == EstadoVehiculo.DENTRO) {
-                vehiculoEncontrado = v;
-                break;
-            }
-        }
+    public String registrarSalidaVehiculo(String placa, String horaSalida) {
+        String respuesta="";
+        Vehiculo vehiculoEncontrado = obtenerVehiculo(placa);
 
         if (vehiculoEncontrado == null) {
-            System.out.println("Error: el vehículo no está registrado dentro del parqueadero");
-            return -1;
+            respuesta= ("El vehículo no se encuentra registrado en el parqueadero");
         }
-
-        vehiculoEncontrado.setHoraSalida(horaSalida);
-
-        double horas = calcularTiempoPermanencia(
-                vehiculoEncontrado.getHoraIngreso(),
-                vehiculoEncontrado.getHoraSalida()
-        );
-
-        Tarifa tarifa = new Tarifa(
-                0,
-                0,
-                null,
-                vehiculoEncontrado.getTipoVehiculo()
-        );
-
-        double totalPagar = tarifa.calcularTotal(horas, vehiculoEncontrado.getTheUsuario());
-
-        EspacioParqueadero espacio = vehiculoEncontrado.getTheEspacioParqueadero();
-        if (espacio != null) {
-            espacio.liberarEspacio();
+            if (vehiculoEncontrado!=null &&
+                    vehiculoEncontrado.getEstadoVehiculo() == EstadoVehiculo.DENTRO) {
+                vehiculoEncontrado.setEstadoVehiculo(EstadoVehiculo.FUERA);
+                respuesta= "La salida del vehiculo "+ vehiculoEncontrado.getPlaca()+" se ha completado correctamente";
+                vehiculoEncontrado.setHoraSalida(horaSalida);
+                EspacioParqueadero espacio = vehiculoEncontrado.getTheEspacioParqueadero();
+                if (espacio != null) {
+                    espacio.liberarEspacio();
+                }
         }
-
-        vehiculoEncontrado.setEstadoVehiculo(EstadoVehiculo.FUERA);
-
-        System.out.println("Salida registrada correctamente");
-        System.out.println("Tiempo total: " + horas + " hora(s)");
-        System.out.println("Valor a pagar: $" + totalPagar);
-
-        return totalPagar;
+            return respuesta;
     }
 
 
-
-    //<------------------------REVISAR---------------------------->
-
-    /**
-     * Método para controlar roles de usuario
-     * @param usuario
-     * @return
-     */
-    public String controlarRol(Usuario usuario) {
-        if (usuario == null) {
-            return "Usuario no válido";
-        }
-
-        if (usuario.getTipoUsuario() == TipoUsuario.ADMINISTRATIVO) {
-            return "Administrador";
-        } else {
-            return "Operador";
-        }
-    }
+    // ------------------ CRUD ESPACIO PARQUEADERO ------------------
 
     /**
      * Método para registrar nuevo espacio
@@ -348,6 +316,48 @@ public class Universidad {
                 "\nVehículos fuera: " + fuera +
                 "\nEspacios totales: " + listEspaciosParqueaderos.size() +
                 "\nEspacios disponibles: " + disponibles;
+    }
+
+    // ------------------CRUD ESPACIO TARIFA ------------------
+
+    public String generarFactura(String placa, String horaSalida) {
+        String respuesta="";
+        Vehiculo vehiculo = obtenerVehiculo(placa);
+
+        if (vehiculo == null) {
+            respuesta= "El vehículo no se encuentra registrado en el parqueadero";
+        }
+
+        double horas = calcularTiempoPermanencia(vehiculo.getHoraIngreso(), horaSalida);
+
+        Tarifa tarifa = new Tarifa(0, 0, vehiculo.getTipoVehiculo());
+        double totalPagar = tarifa.calcularTotal(horas, vehiculo.getTheUsuario());
+        respuesta=  "Factura de salida del vehículo\n"+ "Placa: " + vehiculo.getPlaca() + "\n"+ "Tipo de vehículo: " + vehiculo.getTipoVehiculo() + "\n"+
+        "Tiempo de permanencia: " + horas + " hora(s)\n"+
+       "Valor por hora: $" + tarifa.asignarTarifa() + "\n"+
+                "Descuento aplicado: " + tarifa.calcularDescuento(vehiculo.getTheUsuario()) * 100 + "%\n"+
+       "Total a pagar: $" + totalPagar + "\n";
+
+        return respuesta;
+    }
+
+
+    // ------------------ ROLES DE USUARIO ------------------
+    /**
+     * Método para controlar roles de usuario
+     * @param usuario
+     * @return
+     */
+    public String controlarRol(Usuario usuario) {
+        if (usuario == null) {
+            return "Usuario no válido";
+        }
+
+        if (usuario.getTipoUsuario() == TipoUsuario.ADMINISTRATIVO) {
+            return "Administrador";
+        } else {
+            return "Operador";
+        }
     }
 
     /**
