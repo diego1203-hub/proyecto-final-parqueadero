@@ -318,7 +318,7 @@ public class Universidad {
                 "\nEspacios disponibles: " + disponibles;
     }
 
-    // ------------------CRUD ESPACIO TARIFA ------------------
+    // ------------------CRUD TARIFA ------------------
 
     public String generarFactura(String placa, String horaSalida) {
         String respuesta="";
