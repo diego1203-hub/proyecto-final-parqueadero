@@ -243,7 +243,7 @@ public class Universidad {
      * Método para verificar espacios disponibles
      * @return
      */
-    public boolean verificarEspacioDisponible() {
+    public boolean existeEspacioDisponible() {
         for (EspacioParqueadero e : listEspaciosParqueaderos) {
             if (e.getEstadoEspacio() == EstadoEspacio.DISPONIBLE) {
                 return true;
