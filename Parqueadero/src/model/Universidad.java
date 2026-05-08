@@ -66,41 +66,36 @@ public class Universidad {
      */
     public String registrarEntradaVehiculo(String placa, String nombreConductor, int identificacionConductor, String horaIngreso, TipoVehiculo tipoVehiculo, Usuario theUsuario){
         String respuesta="";
+        EspacioParqueadero espacioDisponible = buscarEspacioDisponible(tipoVehiculo);
+
         for(Vehiculo v:listVehiculos){
             if(v.getPlaca().equalsIgnoreCase(placa) && v.getEstadoVehiculo()==EstadoVehiculo.DENTRO){
-                respuesta= "El vehículo ya se encuentra adentro de la universidad";
-            }
-        }
-        EspacioParqueadero espacioDisponible = null;
-
-        for (EspacioParqueadero e : listEspaciosParqueaderos) {
-            if (e.getEstadoEspacio() == EstadoEspacio.DISPONIBLE &&
-                    e.getTipoVehiculo() == tipoVehiculo) {
-
-                espacioDisponible = e;
-                break;
+                return "El vehículo ya se encuentra adentro de la universidad";
             }
         }
 
         if (espacioDisponible == null) {
-            respuesta= "No hay espacios disponibles";
+            respuesta = "No hay espacios disponibles";
+        } else {
+            Vehiculo vehiculo = new Vehiculo(
+                    placa,
+                    nombreConductor,
+                    identificacionConductor,
+                    horaIngreso,
+                    null,
+                    espacioDisponible,
+                    tipoVehiculo,
+                    theUsuario,
+                    EstadoVehiculo.DENTRO
+            );
+
+            espacioDisponible.asignarEspacio(vehiculo);
+            vehiculo.setTheEspacioParqueadero(espacioDisponible);
+            listVehiculos.add(vehiculo);
+
+            respuesta = "Se ha añadido el vehículo exitosamente";
         }
-        Vehiculo vehiculo = new Vehiculo(
-                placa,
-                nombre,
-                identificacionConductor,
-                horaIngreso,
-                null,
-                null,
-                espacioDisponible,
-                tipoVehiculo,
-                theUsuario,
-                EstadoVehiculo.DENTRO
-        );
-        espacioDisponible.asignarEspacio(vehiculo);
-        vehiculo.setTheEspacioParqueadero(espacioDisponible);
-        listVehiculos.add(vehiculo);
-        respuesta="Se ha añadido el vehículo existosamente";
+
         return respuesta;
     }
 
@@ -155,6 +150,20 @@ public class Universidad {
     // ------------------ CRUD ESPACIO PARQUEADERO ------------------
 
     /**
+     * Método para buscar un espacio disponible para cierto tipo de vehículo
+     * @param tipoVehiculo para validar qué tipo de espacio disponible
+     * @return el espacio parqueadero disponible para un tipo de vehículo específico
+     */
+    public EspacioParqueadero buscarEspacioDisponible(TipoVehiculo tipoVehiculo) {
+        for (EspacioParqueadero e : listEspaciosParqueaderos) {
+            if (e.getEstadoEspacio() == EstadoEspacio.DISPONIBLE &&
+                    e.getTipoVehiculo() == tipoVehiculo) {
+                return e;
+            }
+        }
+        return null;
+    }
+    /**
      * Método para buscar un espacio en el parqueadero por código
      * @param codigo
      * @return
@@ -173,17 +182,16 @@ public class Universidad {
      * Método para registrar nuevo espacio en el parqueadero
      * @param codigo
      * @param tipoVehiculo
-     * @param estadoEspacio
      * @return
      */
-    public String registrarNuevoEspacio(int codigo, TipoVehiculo tipoVehiculo,EstadoEspacio estadoEspacio) {
+    public String registrarNuevoEspacio(int codigo, TipoVehiculo tipoVehiculo) {
         String respuesta="";
         EspacioParqueadero espacio= obtenerEspacio(codigo);
-        if (espacio == null) {
-            respuesta= "El espacio no existe en el registro del parqueadero";
+        if (espacio != null) {
+            respuesta= "El espacio ya existe en el registro del parqueadero";
         } else {
-            EspacioParqueadero espacioNuevo= new EspacioParqueadero(codigo, null);
-            listEspaciosParqueaderos.add(espacio);
+            EspacioParqueadero espacioNuevo= new EspacioParqueadero(codigo, tipoVehiculo);
+            listEspaciosParqueaderos.add(espacioNuevo);
             respuesta= "Espacio registrado correctamente";
         }
         return respuesta;

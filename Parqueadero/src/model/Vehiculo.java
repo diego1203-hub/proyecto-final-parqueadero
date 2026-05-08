@@ -1,5 +1,6 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Vehiculo {
@@ -29,13 +30,13 @@ public class Vehiculo {
      * @param theUsuario
      * @param estadoVehiculo
      */
-    public Vehiculo(String placa, String nombreConductor, int identificacionConductor, String horaIngreso, String horaSalida, List<Tarifa> listTarifas, EspacioParqueadero theEspacioParqueadero, TipoVehiculo tipoVehiculo, Usuario theUsuario, EstadoVehiculo estadoVehiculo) {
+    public Vehiculo(String placa, String nombreConductor, int identificacionConductor, String horaIngreso, String horaSalida, EspacioParqueadero theEspacioParqueadero, TipoVehiculo tipoVehiculo, Usuario theUsuario, EstadoVehiculo estadoVehiculo) {
         this.placa = placa;
         this.nombreConductor = nombreConductor;
         this.identificacionConductor = identificacionConductor;
         this.horaIngreso = horaIngreso;
         this.horaSalida = horaSalida;
-        this.listTarifas = listTarifas;
+        this.listTarifas = new ArrayList<>();
         this.theEspacioParqueadero = theEspacioParqueadero;
         this.tipoVehiculo = tipoVehiculo;
         this.theUsuario = theUsuario;
