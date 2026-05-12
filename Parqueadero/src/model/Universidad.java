@@ -1,5 +1,7 @@
 package model;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.time.Duration;
@@ -70,12 +72,11 @@ public class Universidad {
 
         for(Vehiculo v:listVehiculos){
             if(v.getPlaca().equalsIgnoreCase(placa) && v.getEstadoVehiculo()==EstadoVehiculo.DENTRO){
-                return "El vehículo ya se encuentra adentro de la universidad";
+                throw new IllegalArgumentException("La placa " + placa + " ya está registrada dentro del parqueadero.");
             }
         }
-
         if (espacioDisponible == null) {
-            respuesta = "No hay espacios disponibles";
+            throw new IllegalStateException("No hay espacios disponibles para el tipo de vehículo: " + tipoVehiculo);
         } else {
             Vehiculo vehiculo = new Vehiculo(
                     placa,
@@ -88,7 +89,6 @@ public class Universidad {
                     theUsuario,
                     EstadoVehiculo.DENTRO
             );
-
             espacioDisponible.asignarEspacio(vehiculo);
             vehiculo.setTheEspacioParqueadero(espacioDisponible);
             listVehiculos.add(vehiculo);
@@ -131,17 +131,18 @@ public class Universidad {
         Vehiculo vehiculoEncontrado = obtenerVehiculo(placa);
 
         if (vehiculoEncontrado == null) {
-            respuesta= ("El vehículo no se encuentra registrado en el parqueadero");
+            return  ("El vehículo no se encuentra registrado en el parqueadero");
         }
-            if (vehiculoEncontrado!=null &&
-                    vehiculoEncontrado.getEstadoVehiculo() == EstadoVehiculo.DENTRO) {
-                vehiculoEncontrado.setEstadoVehiculo(EstadoVehiculo.FUERA);
-                respuesta= "La salida del vehiculo "+ vehiculoEncontrado.getPlaca()+" se ha completado correctamente";
-                vehiculoEncontrado.setHoraSalida(horaSalida);
-                EspacioParqueadero espacio = vehiculoEncontrado.getTheEspacioParqueadero();
-                if (espacio != null) {
-                    espacio.liberarEspacio();
-                }
+        if (vehiculoEncontrado.getEstadoVehiculo() == EstadoVehiculo.FUERA) {
+            throw new IllegalStateException("El vehículo con placa " + placa + " ya ha salido.");
+        }else{
+            vehiculoEncontrado.setEstadoVehiculo(EstadoVehiculo.FUERA);
+            respuesta= "La salida del vehiculo "+ vehiculoEncontrado.getPlaca()+" se ha completado correctamente";
+            vehiculoEncontrado.setHoraSalida(horaSalida);
+            EspacioParqueadero espacio = vehiculoEncontrado.getTheEspacioParqueadero();
+            if (espacio != null) {
+                espacio.liberarEspacio();
+            }
         }
             return respuesta;
     }
@@ -198,53 +199,42 @@ public class Universidad {
     }
 
     /**
-     * Método para modificar espacio
-     * @param espacio
-     * @return
+     * Método para modificar los atributos de un espacio parqueadero
+     * @param espacio a modificar
+     * @return respuesta de modificacion exitosa o no exitosa
      */
-    public boolean modificarEspacio(EspacioParqueadero espacio) {
-        if (espacio == null) {
-            return false;
-        }
-
-        for (EspacioParqueadero e : listEspaciosParqueaderos) {
-            if (e.getCodigo() == espacio.getCodigo()) {
-                e.setTipoVehiculo(espacio.getTipoVehiculo());
-                e.setEstadoEspacio(espacio.getEstadoEspacio());
-                System.out.println("Espacio modificado correctamente");
-                return true;
+    public String modificarEspacio(EspacioParqueadero espacio) {
+        String respuesta= "";
+        EspacioParqueadero e= obtenerEspacio(espacio.getCodigo());
+        if (e == null) {
+            return "El espacio no existe en los registros del parqueadero";
+        }else{
+            e.setTipoVehiculo(espacio.getTipoVehiculo());
+            e.setEstadoEspacio(espacio.getEstadoEspacio());
+            respuesta="Espacio modificado correctamente";
             }
+        return respuesta;
         }
 
-        System.out.println("No se encontró el espacio");
-        return false;
-    }
 
     /**
      * Método para deshabilitar espacio
      * @param espacio
      * @return
      */
-    public boolean deshabilitarEspacio(EspacioParqueadero espacio) {
-        if (espacio == null) {
-            return false;
+    public String deshabilitarEspacio(EspacioParqueadero espacio) {
+        String respuesta="";
+        EspacioParqueadero e= obtenerEspacio(espacio.getCodigo());
+        if (e == null) {
+            return "El espacio no existe en el parqueadero";
         }
-
-        for (EspacioParqueadero e : listEspaciosParqueaderos) {
-            if (e.getCodigo() == espacio.getCodigo()) {
-                if (e.getEstadoEspacio() == EstadoEspacio.DISPONIBLE) {
-                    e.setEstadoEspacio(EstadoEspacio.MANTENIMIENTO);
-                    System.out.println("Espacio deshabilitado correctamente");
-                    return true;
+        if (e.getEstadoEspacio() == EstadoEspacio.DISPONIBLE) {
+            e.setEstadoEspacio(EstadoEspacio.MANTENIMIENTO);
+            respuesta= "Espacio deshabilitado correctamente";
                 } else {
-                    System.out.println("No se puede deshabilitar un espacio ocupado");
-                    return false;
-                }
-            }
+                    respuesta ="No se puede deshabilitar un espacio ocupado";
         }
-
-        System.out.println("Espacio no encontrado");
-        return false;
+        return respuesta;
     }
 
     /**
@@ -289,22 +279,20 @@ public class Universidad {
 
     /**
      * Método para consultar los vehiculos que ya están estacionados
-     * @return
+     * @return El reporte con la lista de vehículos estacionados o un mensaje si no hay vehículos estacionados.
      */
     public String consultarVehiculosEstacionados() {
-        String reporte = "";
-
+        StringBuilder reporte = new StringBuilder("=== VEHICULOS ACTUALMENTE ESTACIONADOS ===\n");
         for (Vehiculo v : listVehiculos) {
             if (v.getEstadoVehiculo() == EstadoVehiculo.DENTRO) {
-                reporte += "Placa: " + v.getPlaca() +
-                        " | Tipo: " + v.getTipoVehiculo() +
-                        " | Hora ingreso: " + v.getHoraIngreso();
+                reporte.append("Placa: ").append(v.getPlaca())
+                        .append(" | Tipo: ").append(v.getTipoVehiculo())
+                        .append(" | Hora ingreso: ").append(v.getHoraIngreso());
 
                 if (v.getTheEspacioParqueadero() != null) {
-                    reporte += " | Espacio: " + v.getTheEspacioParqueadero().getCodigo();
+                    reporte.append(" | Espacio: ").append(v.getTheEspacioParqueadero().getCodigo());
                 }
-
-                reporte += "\n";
+                reporte.append("\n");
             }
         }
 
@@ -312,42 +300,89 @@ public class Universidad {
             return "No hay vehículos estacionados";
         }
 
-        return reporte;
-    }
-
-    /**
-     * Método para generar el reporte de las actividades del parqueadero
-     * @return
-     */
-    public String generarReportes() {
-        int dentro = 0;
-        int fuera = 0;
-
-        for (Vehiculo v : listVehiculos) {
-            if (v.getEstadoVehiculo() == EstadoVehiculo.DENTRO) {
-                dentro++;
-            } else if (v.getEstadoVehiculo() == EstadoVehiculo.FUERA) {
-                fuera++;
-            }
-        }
-
-        int disponibles = 0;
-        for (EspacioParqueadero e : listEspaciosParqueaderos) {
-            if (e.getEstadoEspacio() == EstadoEspacio.DISPONIBLE) {
-                disponibles++;
-            }
-        }
-
-        return "===== REPORTE GENERAL =====" +
-                "\nTotal vehículos registrados: " + listVehiculos.size() +
-                "\nVehículos dentro: " + dentro +
-                "\nVehículos fuera: " + fuera +
-                "\nEspacios totales: " + listEspaciosParqueaderos.size() +
-                "\nEspacios disponibles: " + disponibles;
+        return reporte.toString();
     }
 
     // ------------------CRUD TARIFA ------------------
+    /**
+     * Método para buscar y obtener una tarifa por tipo de vehículo
+     * @param tipoVehiculo del vehículo al salir
+     * @return la tarifa para el tipo de vehículo
+     */
+    public Tarifa obtenerTarifaPorTipoVehiculo(TipoVehiculo tipoVehiculo) {
+        Tarifa tarifaEncontrada = null;
+        for (Tarifa t : listTarifas) {
+            if (t != null && t.getTipoVehiculo() == tipoVehiculo) {
+                tarifaEncontrada = t;
+                break;
+            }
+        }
+        return tarifaEncontrada;
+    }
 
+    /**
+     * Método para registrar una tarifa en la universidad
+     * @param tipoVehiculo El tipo de vehículo para el cual se asignará la tarifa
+     * @param tipoUsuario El tipo usuario para definir el descuento a aplicar
+     * @return
+     */
+    public String registrarTarifa(TipoVehiculo tipoVehiculo, TipoUsuario tipoUsuario) {
+        String respuesta= "";
+        for(Tarifa tarifa:listTarifas) {
+            if (tarifa.getTipoVehiculo() == tipoVehiculo) {
+                return "La tarifa para este vehículo ya se encuentra creada";
+            }
+        }
+        Tarifa tarifaNueva= new Tarifa(tipoVehiculo);
+                listTarifas.add(tarifaNueva);
+                tarifaNueva.setDescuento(tarifaNueva.calcularDescuento(tipoUsuario));
+                respuesta=  " La tarifa para el vehículo tipo "+tipoVehiculo+" ha sido registrado correctamente";
+                return respuesta;
+    }
+
+    /**
+     * Método para eliminar una tarifa
+     * @param tipoVehiculo para encontrar el tipo de tarifa a eliminar
+     * @return mensaje con el resultado de la operación
+     */
+        public String eliminarTarifa(TipoVehiculo tipoVehiculo){
+        String respuesta="";
+        Tarifa tarifa = obtenerTarifaPorTipoVehiculo(tipoVehiculo);
+            if(tarifa == null){
+                respuesta = "Tarifa no encontrada";
+            }else{
+                listTarifas.remove(tarifa);
+                respuesta = "Tarifa eliminado correctamente";
+            }
+            return respuesta;
+        }
+    /**
+     * Método para modificar los atributos de una tarifa
+     * @param valorHora de la tarifa a modificar
+     * @param descuento de la tarifa a modificar
+     * @param tipoVehiculo de la tarifa a modificar
+     * @return respuesta de modificación exitosa o no exitosa
+     */
+    public String modificarTarifa(double valorHora, double descuento, TipoVehiculo tipoVehiculo) {
+        String respuesta= "";
+        Tarifa tarifa = obtenerTarifaPorTipoVehiculo(tipoVehiculo);
+        if (tarifa == null) {
+            return "La tarifa no está creada";
+        }else{
+            tarifa.setTipoVehiculo(tipoVehiculo);
+            tarifa.setDescuento(descuento);
+            tarifa.setValorPorHora(valorHora);
+            respuesta="La tarifa ha sido modificado correctamente";
+        }
+        return respuesta;
+    }
+
+    /**
+     * Método para generar la factura del vehículo
+     * @param placa del vehículo
+     * @param horaSalida del vehículo
+     * @return mensaje con el resumen de la factura
+     */
     public String generarFactura(String placa, String horaSalida) {
         String respuesta="";
         Vehiculo vehiculo = obtenerVehiculo(placa);
@@ -358,17 +393,104 @@ public class Universidad {
 
         double horas = calcularTiempoPermanencia(vehiculo.getHoraIngreso(), horaSalida);
 
-        Tarifa tarifa = new Tarifa(0, 0, vehiculo.getTipoVehiculo());
-        double totalPagar = tarifa.calcularTotal(horas, vehiculo.getTheUsuario());
+        Tarifa tarifa = new Tarifa(vehiculo.getTipoVehiculo());
+        double totalPagar = tarifa.calcularTotal(horas, vehiculo.getTheUsuario().getTipoUsuario());
         respuesta=  "Factura de salida del vehículo\n"+ "Placa: " + vehiculo.getPlaca() + "\n"+ "Tipo de vehículo: " + vehiculo.getTipoVehiculo() + "\n"+
         "Tiempo de permanencia: " + horas + " hora(s)\n"+
        "Valor por hora: $" + tarifa.asignarTarifa() + "\n"+
-                "Descuento aplicado: " + tarifa.calcularDescuento(vehiculo.getTheUsuario()) * 100 + "%\n"+
+                "Descuento aplicado: " + tarifa.calcularDescuento(vehiculo.getTheUsuario().getTipoUsuario()) * 100 + "%\n"+
        "Total a pagar: $" + totalPagar + "\n";
 
         return respuesta;
     }
 
+    // ------------------ CRUD USUARIO ------------------
+
+    /**
+     * Método para buscar y obtener un usuario de la lista de usuarios
+     * @param identificacion del usuario
+     * @return el usuario encontrado
+     */
+    public Usuario obtenerUsuario(String identificacion){
+        Usuario uEncontrado= null;
+        for(Usuario us:listUsuarios){
+            if(us.getIdentificacion().equalsIgnoreCase(identificacion)){
+                uEncontrado= us;
+                break;
+            }
+        }
+        return uEncontrado;
+    }
+    /**
+     * Método para registrar un nuevo usuario en el parqueadero
+     * @param nombre del usuario a registrar
+     * @param identificacion del usuario a registrar
+     * @param tipoUsuario del usuario a registrar
+     * @return la respuesta de registro éxitoso o no éxitoso
+     */
+    public String registrarUsuario(String nombre, String identificacion, TipoUsuario tipoUsuario){
+        String respuesta= "";
+        Usuario usuario= obtenerUsuario(identificacion);
+        if(usuario != null){
+            return "El usuario ya se encuentra registrado";
+        } else{
+            Usuario nUsuario= new Usuario(nombre, identificacion, tipoUsuario);
+            listUsuarios.add(nUsuario);
+            respuesta= " El usuario " + nUsuario.getNombre()+ "ha sido registrado en el sistema éxitosamente";
+        }
+        return respuesta;
+    }
+
+    /**
+     * Método para modificar los atributos de un usuario
+     * @param nombre del usuario a mosificar
+     * @param identificacion del usuario a mosificar
+     * @param tipoUsuario del usuario a mosificar
+     * @return
+     */
+    public String modificarUsuario(String nombre, String identificacion, TipoUsuario tipoUsuario){
+        String respuesta="";
+        Usuario usuarioAModificar= obtenerUsuario(identificacion);
+        if(usuarioAModificar==null){
+            return "El usuario no existe en el registro de usuarios";
+        }else{
+            usuarioAModificar.setNombre(nombre);
+            usuarioAModificar.setTipoUsuario(tipoUsuario);
+            respuesta= "El usuario "+usuarioAModificar.getNombre()+" ha sido modificado correctamente";
+        }
+        return respuesta;
+    }
+    /**
+     * Método para Eliminar un usuario según la cédula.
+     * @param identificacion Cédula del usuario a eliminar.
+     * @return Mensaje indicando el resultado de la operación.
+     */
+    public String eliminarUsuario(String identificacion){
+        String respuesta;
+        Usuario usuario = obtenerUsuario(identificacion);
+        if(usuario == null){
+            respuesta = "Usuario no encontrado";
+        }else{
+            listUsuarios.remove(usuario);
+            respuesta = "Usuario eliminado correctamente";
+        }
+        return respuesta;
+    }
+    /**
+     * Método para listar todos los usuarios registrados en el parqueadero.
+     * @return Cadena con la lista de usuarios.
+     */
+    public String listarUsuarios(){
+        StringBuilder listaUsuarios = new StringBuilder("=== LISTA DE USUARIOS ===\n");
+        if (listaUsuarios.isEmpty()) {
+            listaUsuarios.append("No hay usuarios registrados en el parqueadero.\n");
+        } else {
+            for (Usuario u : listUsuarios) {
+                listaUsuarios.append(u.toString()).append("\n");
+            }
+        }
+        return listaUsuarios.toString();
+    }
 
     // ------------------ ROLES DE USUARIO ------------------
     /**
@@ -384,9 +506,159 @@ public class Universidad {
         if (usuario.getTipoUsuario() == TipoUsuario.ADMINISTRATIVO) {
             return "Administrador";
         } else {
-            return "Operador";
+            return "Invitado";
         }
     }
+    /**
+     * Método para iniciar sesión con la identificación del usuario
+     * @param identificacion La identificación del usuario para verificar en la lista de usuarios
+     * @return mensaje que indica si la sesión fue iniciada correctamente o no
+     */
+    public String iniciarSesion(String identificacion) {
+        String respuesta= "";
+        Usuario usuario= obtenerUsuario(identificacion);
+        if(usuario!=null){
+            respuesta= "Sesión iniciada correctamente para " + usuario.getNombre();
+        }else {
+            respuesta= "Usuario no encontrado";
+        }
+        return respuesta;
+    }
+    /**
+     * Método para validar si el usuario tiene permiso de administrador
+     * @param usuario El usuario que se quiere verificar
+     * @return mensaje confirmando si el usuario es administrador o no
+     */
+    public String validarPermisoAdministrador(Usuario usuario) {
+        String respuesta= "";
+        if (usuario.getTipoUsuario() == TipoUsuario.ADMINISTRATIVO) {
+            respuesta= "Permiso de administrador concedido.";
+        } else {
+            respuesta= "El usuario no tiene permiso de administrador.";
+        }
+        return respuesta;
+    }
+    /**
+     * Método para validar si el usuario tiene permiso de operador
+     * @param usuario El usuario que se quiere verificar
+     * @return mensaje confirmando si el usuario es operador o no
+     */
+    public String validarPermisoOperador(Usuario usuario) {
+        if (usuario.getTipoUsuario() == TipoUsuario.ESTUDIANTE || usuario.getTipoUsuario() == TipoUsuario.DOCENTE) {
+            return "Permiso de operador concedido.";
+        } else {
+            return "El usuario no tiene permiso de operador.";
+        }
+    }
+    // ------------------ REPORTES DEL PARQUEADERO ------------------
+    /**
+     * Método para generar el reporte de las actividades del parqueadero
+     * @return
+     */
+    public String generarReporte() {
+        StringBuilder reporte = new StringBuilder("=== REPORTE GENERAL DEL PARQUEADERO ===\n");
+        int dentro = 0;
+        int fuera = 0;
+        int disponibles = 0;
+        for (Vehiculo v : listVehiculos) {
+            if (v.getEstadoVehiculo() == EstadoVehiculo.DENTRO) {
+                dentro++;
+            } else if (v.getEstadoVehiculo() == EstadoVehiculo.FUERA) {
+                fuera++;
+            }
+        }
+
+        for (EspacioParqueadero e : listEspaciosParqueaderos) {
+            if (e.getEstadoEspacio() == EstadoEspacio.DISPONIBLE) {
+                disponibles++;
+            }
+        }
+        //Datos generales
+        reporte.append("Total vehículos registrados: ").append(listVehiculos.size()).append("\n")
+                .append("Vehículos dentro: ").append(dentro).append("\n")
+                .append("Vehículos fuera: ").append(fuera).append("\n")
+                .append("Espacios totales: ").append(listEspaciosParqueaderos.size()).append("\n")
+                .append("Espacios disponibles: ").append(disponibles).append("\n");
+        //Ingresos Totales
+        double ingresos = ingresosGeneradosDia();
+        reporte.append("Ingresos generados hoy: $").append(ingresos).append("\n");
+
+        // Tiempo promedio de permanencia
+        double tiempoPromedio = tiempoPromedioPermanencia();
+        reporte.append("Tiempo promedio de permanencia hoy: ").append(tiempoPromedio).append(" horas\n");
+
+        // Vehículos que permanecieron más de 4 horas
+        reporte.append("Vehículos que permanecieron más de 4 horas: \n");
+        reporte.append(vehiculosMasDeDeterminadasHoras(4));
+
+        return reporte.toString();
+    }
+
+    /**
+     * Método para calcular los ingresos generados hoy.
+     * @return El total de ingresos generados hoy.
+     */
+    public double ingresosGeneradosDia() {
+        double totalIngresos = 0;
+        LocalDate hoy = LocalDate.now();  // Obtenemos la fecha de hoy
+
+        for (Vehiculo v : listVehiculos) {
+            LocalDate ingresoFecha = LocalDate.parse(v.getHoraIngreso().split(" ")[0]);
+            if (ingresoFecha.equals(hoy)) {
+                double tiempo = calcularTiempoPermanencia(v.getHoraIngreso(), v.getHoraSalida());
+                Tarifa tarifa = obtenerTarifaPorTipoVehiculo(v.getTipoVehiculo());
+                double ingresos = tarifa.calcularTotal(tiempo, v.getTheUsuario().getTipoUsuario());
+                totalIngresos += ingresos;
+            }
+    }
+        return totalIngresos;
+}
+    /**
+     * Método para calcular el tiempo promedio de permanencia de los vehículos en el parqueadero.
+     * @return El tiempo promedio de permanencia en horas.
+     */
+    public double tiempoPromedioPermanencia() {
+        double totalTiempo = 0;
+        int totalVehiculos = 0;
+        double promedio=0;
+
+        for (Vehiculo v : listVehiculos) {
+            if (v.getHoraSalida() != null) {
+                double tiempo = calcularTiempoPermanencia(v.getHoraIngreso(), v.getHoraSalida());
+                totalTiempo += tiempo;
+                totalVehiculos++;
+            }
+
+        }
+        if (totalVehiculos > 0){
+            promedio= totalTiempo / totalVehiculos;
+        }
+         return promedio;
+    }
+
+    /**
+     * Método para obtener los vehículos que han permanecido más de X horas en el parqueadero.
+     * @param horas El número de horas de permanencia que debe superar el vehículo para ser incluido.
+     * @return Un reporte de vehículos que han permanecido más de X horas.
+     */
+    public String vehiculosMasDeDeterminadasHoras(double horas) {
+        StringBuilder reporte = new StringBuilder();
+
+        for (Vehiculo v : listVehiculos) {
+            double tiempo = calcularTiempoPermanencia(v.getHoraIngreso(), v.getHoraSalida());
+            if (tiempo > horas) {
+                reporte.append("Placa: ").append(v.getPlaca())
+                        .append(" | Tipo: ").append(v.getTipoVehiculo())
+                        .append(" | Tiempo de permanencia: ").append(tiempo)
+                        .append(" horas\n");
+            }
+        }
+        if(reporte.isEmpty()){
+            reporte.append("No hay vehículos que hayan permanecido más de ").append(horas).append(" horas.");
+        }
+        return reporte.toString();
+    }
+
 
     /**
      * Getters y Setters de la clase Universidad
@@ -446,4 +718,5 @@ public class Universidad {
     public void setListTarifas(List<Tarifa> listTarifas) {
         this.listTarifas = listTarifas;
     }
+
 }

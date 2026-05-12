@@ -1,5 +1,6 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Usuario {
@@ -12,16 +13,23 @@ public class Usuario {
      * Metodo constructor de la clase Usuario
      * @param nombre
      * @param identificacion
-     * @param listVehiculos
      * @param tipoUsuario
      */
-
-    public Usuario(String nombre, String identificacion, List<Vehiculo> listVehiculos, TipoUsuario tipoUsuario) {
+    public Usuario(String nombre, String identificacion, TipoUsuario tipoUsuario) {
         this.nombre = nombre;
         this.identificacion = identificacion;
-        this.listVehiculos = listVehiculos;
+        this.listVehiculos = new ArrayList<>();
         this.tipoUsuario = tipoUsuario;
     }
+
+    /**
+     * Método para añadir los vehículos que pertenecen al usuario a la lista de vehículos
+     * @param vehiculo a añadir a la lista
+     */
+    public void añadirVehiculoLista(Vehiculo vehiculo){
+        listVehiculos.add(vehiculo);
+    }
+
 
     public String getNombre() {
         return nombre;

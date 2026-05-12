@@ -10,7 +10,6 @@ public class Vehiculo {
     private String horaIngreso;
     private String horaSalida;
 
-    private List<Tarifa> listTarifas;
     private EspacioParqueadero theEspacioParqueadero;
     private TipoVehiculo tipoVehiculo;
     private Usuario theUsuario;
@@ -18,13 +17,12 @@ public class Vehiculo {
 
 
     /**
-     * Constructor de la clase Vehiculo
+     * Constructor de la clase Vehículo
      * @param placa
      * @param nombreConductor
      * @param identificacionConductor
      * @param horaIngreso
      * @param horaSalida
-     * @param listTarifas
      * @param theEspacioParqueadero
      * @param tipoVehiculo
      * @param theUsuario
@@ -36,7 +34,6 @@ public class Vehiculo {
         this.identificacionConductor = identificacionConductor;
         this.horaIngreso = horaIngreso;
         this.horaSalida = horaSalida;
-        this.listTarifas = new ArrayList<>();
         this.theEspacioParqueadero = theEspacioParqueadero;
         this.tipoVehiculo = tipoVehiculo;
         this.theUsuario = theUsuario;
@@ -86,14 +83,6 @@ public class Vehiculo {
 
     public void setHoraSalida(String horaSalida) {
         this.horaSalida = horaSalida;
-    }
-
-    public List<Tarifa> getListTarifas() {
-        return listTarifas;
-    }
-
-    public void setListTarifas(List<Tarifa> listTarifas) {
-        this.listTarifas = listTarifas;
     }
 
     public EspacioParqueadero getTheEspacioParqueadero() {
