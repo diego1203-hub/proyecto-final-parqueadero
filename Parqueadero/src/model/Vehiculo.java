@@ -3,6 +3,7 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class Vehiculo {
     private String placa;
     private String nombreConductor;
@@ -18,15 +19,15 @@ public class Vehiculo {
 
     /**
      * Constructor de la clase Vehículo
-     * @param placa
-     * @param nombreConductor
-     * @param identificacionConductor
-     * @param horaIngreso
-     * @param horaSalida
-     * @param theEspacioParqueadero
-     * @param tipoVehiculo
-     * @param theUsuario
-     * @param estadoVehiculo
+     * @param placa del vehículo
+     * @param nombreConductor del vehículo
+     * @param identificacionConductor del vehículo
+     * @param horaIngreso del vehículo
+     * @param horaSalida del vehículo
+     * @param theEspacioParqueadero del vehículo
+     * @param tipoVehiculo del vehículo
+     * @param theUsuario del vehículo
+     * @param estadoVehiculo del vehículo
      */
     public Vehiculo(String placa, String nombreConductor, int identificacionConductor, String horaIngreso, String horaSalida, EspacioParqueadero theEspacioParqueadero, TipoVehiculo tipoVehiculo, Usuario theUsuario, EstadoVehiculo estadoVehiculo) {
         this.placa = placa;
