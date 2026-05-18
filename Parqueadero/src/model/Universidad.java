@@ -1,7 +1,6 @@
 package model;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.time.Duration;
@@ -20,15 +19,12 @@ public class Universidad {
 
     /**
      * Constructor de la clase Universidad
+     *
      * @param nombre
      * @param nit
      * @param direccion
-     * @param listUsuarios
-     * @param listVehiculos
-     * @param listEspaciosParqueaderos
-     * @param listTarifas
      */
-    public Universidad(String nombre, int nit, String direccion, List<Usuario> listUsuarios, List<Vehiculo> listVehiculos, List<EspacioParqueadero> listEspaciosParqueaderos, List<Tarifa> listTarifas) {
+    public Universidad(String nombre, int nit, String direccion) {
         this.nombre = nombre;
         this.nit = nit;
         this.direccion = direccion;
