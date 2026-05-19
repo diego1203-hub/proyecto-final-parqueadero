@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.Blend?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity"
+            maxWidth="-Infinity"
+            minHeight="-Infinity"
+            minWidth="-Infinity"
+            prefHeight="620.0"
+            prefWidth="850.0"
+            xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="co.uniquindio.edu.co.poo.parqueaderojfx.viewController.VehiculoViewController">
+
+    <children>
+
+        <SplitPane dividerPositions="0.44"
+                   orientation="VERTICAL"
+                   prefHeight="620.0"
+                   prefWidth="850.0">
+
+            <items>
+
+                <!-- PANEL SUPERIOR -->
+                <AnchorPane prefHeight="270.0"
+                            prefWidth="850.0">
+
+                    <children>
+
+                        <Pane layoutX="25.0"
+                              layoutY="15.0"
+                              prefHeight="245.0"
+                              prefWidth="800.0"
+                              style="-fx-border-color: #07912c; -fx-border-width: 2; -fx-background-color: #f8f8f8;">
+
+                            <effect>
+                                <Blend />
+                            </effect>
+
+                            <children>
+
+                                <Label layoutX="300.0"
+                                       layoutY="12.0"
+                                       text="Gestión Vehículos">
+
+                                    <font>
+                                        <Font name="System Bold"
+                                              size="18.0" />
+                                    </font>
+
+                                </Label>
+
+                                <!-- PLACA -->
+                                <Label layoutX="35.0"
+                                       layoutY="58.0"
+                                       text="Placa:">
+
+                                    <font>
+                                        <Font size="15.0" />
+                                    </font>
+
+                                </Label>
+
+                                <TextField fx:id="txtPlaca"
+                                           layoutX="170.0"
+                                           layoutY="55.0"
+                                           prefWidth="190.0" />
+
+                                <!-- NOMBRE -->
+                                <Label layoutX="35.0"
+                                       layoutY="98.0"
+                                       text="Nombre conductor:">
+
+                                    <font>
+                                        <Font size="15.0" />
+                                    </font>
+
+                                </Label>
+
+                                <TextField fx:id="txtNombreConductor"
+                                           layoutX="170.0"
+                                           layoutY="95.0"
+                                           prefWidth="190.0" />
+
+                                <!-- IDENTIFICACION -->
+                                <Label layoutX="35.0"
+                                       layoutY="138.0"
+                                       text="Identificación:">
+
+                                    <font>
+                                        <Font size="15.0" />
+                                    </font>
+
+                                </Label>
+
+                                <TextField fx:id="txtIdentificacionConductor"
+                                           layoutX="170.0"
+                                           layoutY="135.0"
+                                           prefWidth="190.0" />
+
+                                <!-- HORA INGRESO -->
+                                <Label layoutX="430.0"
+                                       layoutY="58.0"
+                                       text="Hora ingreso:">
+
+                                    <font>
+                                        <Font size="15.0" />
+                                    </font>
+
+                                </Label>
+
+                                <TextField fx:id="txtHoraIngreso"
+                                           layoutX="560.0"
+                                           layoutY="55.0"
+                                           prefWidth="190.0"
+                                           promptText="HH:mm" />
+
+                                <!-- HORA SALIDA -->
+                                <Label layoutX="430.0"
+                                       layoutY="98.0"
+                                       text="Hora salida:">
+
+                                    <font>
+                                        <Font size="15.0" />
+                                    </font>
+
+                                </Label>
+
+                                <TextField fx:id="txtHoraSalida"
+                                           layoutX="560.0"
+                                           layoutY="95.0"
+                                           prefWidth="190.0"
+                                           promptText="HH:mm" />
+
+                                <!-- TIPO VEHICULO -->
+                                <Label layoutX="430.0"
+                                       layoutY="138.0"
+                                       text="Tipo vehículo:">
+
+                                    <font>
+                                        <Font size="15.0" />
+                                    </font>
+
+                                </Label>
+
+                                <ComboBox fx:id="cbTipoVehiculo"
+                                          layoutX="560.0"
+                                          layoutY="135.0"
+                                          prefWidth="190.0" />
+
+                                <!-- BOTONES -->
+                                <Button fx:id="btnAgregarVehiculo"
+                                        layoutX="190.0"
+                                        layoutY="190.0"
+                                        mnemonicParsing="false"
+                                        onAction="#onAgregarVehiculo"
+                                        prefWidth="170.0"
+                                        text="Registrar Entrada" />
+
+                                <Button fx:id="btnRegistrarSalida"
+                                        layoutX="450.0"
+                                        layoutY="190.0"
+                                        mnemonicParsing="false"
+                                        onAction="#onRegistrarSalida"
+                                        prefWidth="170.0"
+                                        text="Registrar Salida" />
+
+                            </children>
+                        </Pane>
+                    </children>
+                </AnchorPane>
+
+                <!-- TABLA -->
+                <AnchorPane prefHeight="340.0"
+                            prefWidth="850.0">
+
+                    <children>
+
+                        <TableView fx:id="tblListVehiculo"
+                                   layoutX="10.0"
+                                   layoutY="10.0"
+                                   prefHeight="260.0"
+                                   prefWidth="830.0">
+
+                            <columns>
+
+                                <TableColumn fx:id="tbcPlaca"
+                                             prefWidth="100.0"
+                                             text="Placa" />
+
+                                <TableColumn fx:id="tbcNombreConductor"
+                                             prefWidth="160.0"
+                                             text="Conductor" />
+
+                                <TableColumn fx:id="tbcIdentificacionConductor"
+                                             prefWidth="130.0"
+                                             text="Identificación" />
+
+                                <TableColumn fx:id="tbcHoraIngreso"
+                                             prefWidth="110.0"
+                                             text="Hora ingreso" />
+
+                                <TableColumn fx:id="tbcHoraSalida"
+                                             prefWidth="110.0"
+                                             text="Hora salida" />
+
+                                <TableColumn fx:id="tbcTipoVehiculo"
+                                             prefWidth="110.0"
+                                             text="Tipo" />
+
+                                <TableColumn fx:id="tbcEstadoVehiculo"
+                                             prefWidth="110.0"
+                                             text="Estado" />
+
+                            </columns>
+                        </TableView>
+
+                        <!-- BOTON LIMPIAR -->
+                        <Button fx:id="btnLimpiar"
+                                layoutX="360.0"
+                                layoutY="290.0"
+                                mnemonicParsing="false"
+                                onAction="#onLimpiar"
+                                prefWidth="110.0"
+                                text="Limpiar" />
+
+                    </children>
+                </AnchorPane>
+
+            </items>
+        </SplitPane>
+
+    </children>
+</AnchorPane>

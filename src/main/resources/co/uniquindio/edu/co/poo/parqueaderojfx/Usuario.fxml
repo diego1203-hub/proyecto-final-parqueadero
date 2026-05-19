@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="566.0" prefWidth="429.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.uniquindio.edu.co.poo.parqueaderojfx.viewController.UsuarioViewController">
+
+    <children>
+
+        <SplitPane dividerPositions="0.515" orientation="VERTICAL" prefHeight="566.0" prefWidth="429.0">
+
+            <items>
+
+                <!-- PARTE SUPERIOR -->
+                <AnchorPane prefHeight="288.0" prefWidth="401.0">
+
+                    <children>
+
+                        <Pane layoutX="34.0" layoutY="19.0" prefHeight="249.0" prefWidth="360.0" style="-fx-border-color: #07912c; -fx-border-width: 2; -fx-background-color: #f8f8f8;">
+
+                            <effect>
+                                <Blend />
+                            </effect>
+
+                            <children>
+
+                                <Label layoutX="110.0" layoutY="14.0" text="Gestión Usuarios">
+
+                                    <font>
+                                        <Font name="System Bold" size="18.0" />
+                                    </font>
+
+                                </Label>
+
+                                <!-- IDENTIFICACION -->
+                                <Label layoutX="28.0" layoutY="58.0" text="Identificación:">
+
+                                    <font>
+                                        <Font size="16.0" />
+                                    </font>
+
+                                </Label>
+
+                                <TextField fx:id="txtIdentificacion" layoutX="150.0" layoutY="58.0" prefHeight="25.0" prefWidth="170.0" />
+
+                                <!-- NOMBRE -->
+                                <Label layoutX="28.0" layoutY="98.0" text="Nombre:">
+
+                                    <font>
+                                        <Font size="16.0" />
+                                    </font>
+
+                                </Label>
+
+                                <TextField fx:id="txtNombre" layoutX="150.0" layoutY="98.0" prefHeight="25.0" prefWidth="170.0" />
+
+                                <!-- TIPO USUARIO -->
+                                <Label layoutX="28.0" layoutY="138.0" text="Tipo Usuario:">
+
+                                    <font>
+                                        <Font size="16.0" />
+                                    </font>
+
+                                </Label>
+
+                                <ComboBox fx:id="cbTipoUsuario" layoutX="150.0" layoutY="138.0" prefWidth="170.0" />
+
+                                <!-- BOTONES -->
+                                <Button fx:id="btnAgregarUsuario" layoutX="42.0" layoutY="198.0" mnemonicParsing="false" onAction="#onAgregarUsuario" prefWidth="120.0" text="Agregar Usuario" />
+
+                                <Button fx:id="btnActualizarUsuario" layoutX="190.0" layoutY="198.0" mnemonicParsing="false" onAction="#onActualizarUsuario" prefWidth="130.0" text="Actualizar Usuario" />
+
+                            </children>
+                        </Pane>
+                    </children>
+                </AnchorPane>
+
+                <!-- PARTE INFERIOR -->
+                <AnchorPane prefHeight="271.0" prefWidth="645.0">
+
+                    <children>
+
+                        <TableView fx:id="tblListUsuarios" layoutX="8.0" layoutY="8.0" prefHeight="206.0" prefWidth="412.0">
+
+                            <columns>
+
+                                <TableColumn fx:id="tbcIdentificacion" prefWidth="120.0" text="Identificación" />
+
+                                <TableColumn fx:id="tbcNombre" prefWidth="140.0" text="Nombre" />
+
+                                <TableColumn fx:id="tbcTipoUsuario" prefWidth="150.0" text="Tipo Usuario" />
+
+                            </columns>
+                        </TableView>
+
+                        <!-- BOTONES ABAJO -->
+                        <Button fx:id="btnLimpiar" layoutX="85.0" layoutY="225.0" mnemonicParsing="false" onAction="#onLimpiar" prefHeight="25.0" prefWidth="100.0" text="Limpiar" />
+
+                        <Button fx:id="btnEliminar" layoutX="230.0" layoutY="225.0" mnemonicParsing="false" onAction="#onEliminar" prefHeight="25.0" prefWidth="100.0" text="Eliminar" />
+
+                    </children>
+                </AnchorPane>
+
+            </items>
+        </SplitPane>
+
+    </children>
+</AnchorPane>

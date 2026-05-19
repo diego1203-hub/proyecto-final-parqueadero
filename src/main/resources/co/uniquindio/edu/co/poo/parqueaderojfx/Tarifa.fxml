@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.Blend?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity"
+            maxWidth="-Infinity"
+            minHeight="-Infinity"
+            minWidth="-Infinity"
+            prefHeight="566.0"
+            prefWidth="650.0"
+            xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="co.uniquindio.edu.co.poo.parqueaderojfx.viewController.TarifaViewController">
+
+    <children>
+
+        <SplitPane dividerPositions="0.50"
+                   orientation="VERTICAL"
+                   prefHeight="566.0"
+                   prefWidth="650.0">
+
+            <items>
+
+                <!-- PARTE SUPERIOR -->
+                <AnchorPane prefHeight="280.0"
+                            prefWidth="650.0">
+
+                    <children>
+
+                        <Pane layoutX="55.0"
+                              layoutY="20.0"
+                              prefHeight="240.0"
+                              prefWidth="540.0"
+                              style="-fx-border-color: #07912c; -fx-border-width: 2; -fx-background-color: #f8f8f8;">
+
+                            <effect>
+                                <Blend />
+                            </effect>
+
+                            <children>
+
+                                <Label layoutX="200.0"
+                                       layoutY="15.0"
+                                       text="Gestión Tarifas">
+
+                                    <font>
+                                        <Font name="System Bold"
+                                              size="18.0" />
+                                    </font>
+
+                                </Label>
+
+                                <Label layoutX="65.0"
+                                       layoutY="65.0"
+                                       text="Tipo vehículo:">
+
+                                    <font>
+                                        <Font size="16.0" />
+                                    </font>
+
+                                </Label>
+
+                                <ComboBox fx:id="cbTipoVehiculo"
+                                          layoutX="210.0"
+                                          layoutY="65.0"
+                                          prefWidth="220.0" />
+
+                                <Label layoutX="65.0"
+                                       layoutY="105.0"
+                                       text="Tipo usuario:">
+
+                                    <font>
+                                        <Font size="16.0" />
+                                    </font>
+
+                                </Label>
+
+                                <ComboBox fx:id="cbTipoUsuario"
+                                          layoutX="210.0"
+                                          layoutY="105.0"
+                                          prefWidth="220.0" />
+
+                                <Label layoutX="65.0"
+                                       layoutY="145.0"
+                                       text="Valor hora:">
+
+                                    <font>
+                                        <Font size="16.0" />
+                                    </font>
+
+                                </Label>
+
+                                <TextField fx:id="txtValorHora"
+                                           layoutX="210.0"
+                                           layoutY="145.0"
+                                           prefWidth="220.0"
+                                           promptText="Ej: 3000" />
+
+                                <Label layoutX="65.0"
+                                       layoutY="185.0"
+                                       text="Descuento:">
+
+                                    <font>
+                                        <Font size="16.0" />
+                                    </font>
+
+                                </Label>
+
+                                <TextField fx:id="txtDescuento"
+                                           layoutX="210.0"
+                                           layoutY="185.0"
+                                           prefWidth="220.0"
+                                           promptText="Ej: 0.10" />
+
+                            </children>
+
+                        </Pane>
+
+                    </children>
+
+                </AnchorPane>
+
+                <!-- PARTE INFERIOR -->
+                <AnchorPane prefHeight="280.0"
+                            prefWidth="650.0">
+
+                    <children>
+
+                        <TableView fx:id="tblListTarifas"
+                                   layoutX="15.0"
+                                   layoutY="10.0"
+                                   prefHeight="205.0"
+                                   prefWidth="620.0">
+
+                            <columns>
+
+                                <TableColumn fx:id="tbcTipoVehiculo"
+                                             prefWidth="180.0"
+                                             text="Tipo Vehículo" />
+
+                                <TableColumn fx:id="tbcValorHora"
+                                             prefWidth="180.0"
+                                             text="Valor Hora" />
+
+                                <TableColumn fx:id="tbcDescuento"
+                                             prefWidth="180.0"
+                                             text="Descuento" />
+
+                            </columns>
+
+                        </TableView>
+
+                        <Button fx:id="btnAgregarTarifa"
+                                layoutX="85.0"
+                                layoutY="230.0"
+                                mnemonicParsing="false"
+                                onAction="#onAgregarTarifa"
+                                prefWidth="120.0"
+                                text="Registrar" />
+
+                        <Button fx:id="btnModificarTarifa"
+                                layoutX="220.0"
+                                layoutY="230.0"
+                                mnemonicParsing="false"
+                                onAction="#onModificarTarifa"
+                                prefWidth="120.0"
+                                text="Modificar" />
+
+                        <Button fx:id="btnEliminarTarifa"
+                                layoutX="355.0"
+                                layoutY="230.0"
+                                mnemonicParsing="false"
+                                onAction="#onEliminarTarifa"
+                                prefWidth="120.0"
+                                text="Eliminar" />
+
+                        <Button fx:id="btnLimpiar"
+                                layoutX="490.0"
+                                layoutY="230.0"
+                                mnemonicParsing="false"
+                                onAction="#onLimpiar"
+                                prefWidth="90.0"
+                                text="Limpiar" />
+
+                    </children>
+
+                </AnchorPane>
+
+            </items>
+
+        </SplitPane>
+
+    </children>
+
+</AnchorPane>
